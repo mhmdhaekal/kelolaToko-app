@@ -1,0 +1,27 @@
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Bold.ttf");
+  font-weight: bold;
+}
+
+body {
+  font-family: "Inter";
+  padding-left: 2rem;
+  padding-top: 1rem;
+  position: relative;
+}
+
+.products {
+  display: flex;
+  flex-direction: column;
+}
+
+.product {
+  display: flex;
+  flex-direction: column;
+}

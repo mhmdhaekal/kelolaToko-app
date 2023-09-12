@@ -1,0 +1,33 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>KelolaToko | Kelola Tokomu</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'styles/index.css' %}"
+    />
+  </head>
+  <body>
+    <h1 class="title" id="appplication-name">{{applicationName}}</h1>
+    <p class="name-class" id="name">Nama : {{nama}}</p>
+    <p class="name-class" id="class">Kelas : {{class}}</p>
+
+    <h2 style="margin-top: 50px">Daftar Produk</h2>
+    <div class="products" id="products">
+      {% if products %} {% for product in products %}
+      <div class="product" key="{{product.id}}">
+        <h3>{{product.name}}</h3>
+        <p>{{product.description}}</p>
+        <p>Harga : {{product.price}}</p>
+        <p>Stok: {{product.stock}}</p>
+        <p>Terjual : {{product.sold}}</p>
+        <p>Category: {{product.category__name}}</p>
+      </div>
+
+      {% endfor %} {% endif %}
+    </div>
+  </body>
+</html>
