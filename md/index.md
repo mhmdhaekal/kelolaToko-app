@@ -78,7 +78,7 @@ python manage.py test
 ## Pertanyaan 2
 
 **Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html**
-![Bagan Django](img/django.png)
+![Bagan Django](https://hkalipaksibucket.s3.us-east-1.amazonaws.com/django.png)
 Link : https://www.figma.com/file/WP1iYOAlzmEyTEA3Lbcphy/Untitled?type=whiteboard&node-id=0%3A1&t=eMH9AVntj3g5H06b-1
 
 ## Pertanyaan 3
