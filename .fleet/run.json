@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "django",
+            "name": "Django configuration",
+            "command": "runserver",
+            "bindPort": 3000,
+            "manageFilePath": "manage.py",
+        },
+
+    ]
+}
