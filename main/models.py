@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import uuid
 
 
@@ -11,7 +12,7 @@ class BaseModel(models.Model):
 
 class Product(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255, blank=False, null=False, unique=True)
+    name = models.CharField(max_length=255, blank=False, null=False, unique=False)
     description = models.TextField(blank=True, null=True)
     price = models.IntegerField(blank=False, null=False)
     stock = models.IntegerField(blank=False, null=False)
@@ -19,6 +20,7 @@ class Product(BaseModel):
     category = models.ForeignKey(
         "Category", on_delete=models.RESTRICT, blank=True, null=True
     )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -26,7 +28,8 @@ class Product(BaseModel):
 
 class Category(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255, blank=False, null=False, unique=True)
+    name = models.CharField(max_length=255, blank=False, null=False, unique=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

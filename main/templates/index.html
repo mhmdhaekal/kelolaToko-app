@@ -1,68 +1,75 @@
 {% extends "base.html" %} {% block content %}
-    <h1 class="title" id="appplication-name">{{ applicationName }}</h1>
-    <p class="name-class" id="name">Nama : {{ nama }}</p>
-    <p class="name-class" id="class">Kelas : {{ class }}</p>
-    <h2 style="margin-top: 50px;text-align: center">Daftar Produk</h2>
-    <div class="products" id="products">
-        {% if productData %}
-            <div>
-                <p>Terdapat <span style="font-weight: bold">{{ productData.count }}</span> produk pada sistem kelolaToko
-                </p>
-                <table class="product-table">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Sold</th>
-                        <th>Category</th>
-                    </tr>
+<h1 class="title" id="appplication-name">{{ applicationName }}</h1>
+<p class="name-class" id="name">Nama : {{ nama }}</p>
+<p class="name-class" id="class">Kelas : {{ class }}</p>
+<p class="name-class" id="class">Last login : {{ last_login }}</p>
 
-                    {% for product in productData.products %}
-                        <tr>
-                            <td>{{ product.id }}</td>
-                            <td>{{ product.name }}</td>
-                            <td class="description-table">{{ product.description }}</td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.stock }}</td>
-                            <td>{{ product.sold }}</td>
-                            <td>{{ product.category__name }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>{% endif %}
-    </div>
+<a href="{% url 'main:logout' %}">
+  <button class="button">Logout</button>
+</a>
 
-    <div class="button-section">
-        <div class="product-button">
-            <a href="{% url 'main:add-product' %}">
-                <button class="button">
-                    Tambah Produk
-                </button>
-            </a>
+<h2 style="margin-top: 50px; text-align: center">Daftar Produk</h2>
+<div class="products" id="products">
+  {% if productData %}
+  <div>
+    <p>
+      Terdapat
+      <span style="font-weight: bold">{{ productData.count }}</span> produk pada
+      sistem kelolaToko
+    </p>
+    <table class="product-table">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Sold</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
 
-            <a href="{% url 'main:delete-product' %}">
-                <button class="button">
-                    Hapus Produk
-                </button>
-            </a>
-        </div>
+      {% for product in productData.products %}
+      <form method="POST" action="{% url 'main:sold-product' %}">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.id }}" />
+        <tr>
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td class="description-table">{{ product.description }}</td>
+          <td>{{ product.price }}</td>
+          <td>{{ product.stock }}</td>
+          <td>{{ product.sold }}</td>
+          <td>{{ product.category__name }}</td>
+          <td><button type="submit">Sell</button></td>
+        </tr>
+      </form>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+</div>
 
-        <div class="category-button">
-            <a href="{% url 'main:add-category' %}">
-                <button class="button">
-                    Tambah Kategori
-                </button>
-            </a>
+<div class="button-section">
+  <div class="product-button">
+    <a href="{% url 'main:add-product' %}">
+      <button class="button">Tambah Produk</button>
+    </a>
 
-            <a href="{% url 'main:delete-category' %}">
-                <button class="button">
-                    Hapus Kategori
-                </button>
-            </a>
-        </div>
+    <a href="{% url 'main:delete-product' %}">
+      <button class="button">Hapus Produk</button>
+    </a>
+  </div>
 
-    </div>
+  <div class="category-button">
+    <a href="{% url 'main:add-category' %}">
+      <button class="button">Tambah Kategori</button>
+    </a>
+
+    <a href="{% url 'main:delete-category' %}">
+      <button class="button">Hapus Kategori</button>
+    </a>
+  </div>
+</div>
 
 {% endblock content %}

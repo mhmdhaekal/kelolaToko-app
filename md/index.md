@@ -6,20 +6,207 @@ PBP-F
 
 2206817490
 
+---
+
+## Tugas 4
+
+### Pertanyaan 1
+
+**Apa itu Django `UserCreationForm`, dan jelaskan apa kelebihan dan kekurangannya?**
+
+**Kelebihan:**
+
+- Mudah digunakan, `UserCreationForm` merupakan form bawaan yang disediakan langsung oleh django dan sudah terhubung dengan model `user` django tanpa harus mendefinisikan model user.
+
+- Dilengkapi dengan validasi, `UserCreationForm` sudah dilengkapi dengan validasi username dan password.
+
+- Terintegrasi dengan `django authentication`, sehingga tidak harus mendefinisikan fungsi login, logout, dan registrasi. Selain itu, `UserCreationForm` juga terintegrasi dengan decorators bawaan django.
+
+**Kekurangan:**
+
+- Tidak flexibel, `UserCreationForm` bergantung dengan model `User` yang disediakan oleh Django. Jika, sistem yang dibuat membutuhkan model `User` yang lebih rumit, sulit jika menggunakan `UserCreationForm`.
+
+- Tidak mendukung untuk register/login menggunakan layanan pihak ketiga, terkadang suatu sistem membutuhkan pilihan untuk register/login menggunakan layanan pihak ketiga seperti Google untuk memudahkan pengguna.
+
+### Pertanyaan 2
+
+_Apa perbedaan antara autentikasi dan otorisasi dalam konteks Django, dan mengapa keduanya penting?_
+
+Autentikasi merupakan proses untuk memverifikasi identitas user, seperti menentukan `userId` dan memastikan bahwa sistem serta _resource_ yang digunakan sesuai dengan milik `user`. Selain itu, authentikasi digunakan untuk memastikan bahwa user telah mendaftar, memiliki akun dan memiliki akses dalam suatu sistem. Contoh autentikasi dalam django adalah proses login(memasukkan username/password) atau register jika belum mempunyai akun.
+
+Otorisasi merupakan proses untuk memastikan bahwa `user` memiliki akses dalam mengakses suatu fitur. Tentunya dalam suatu sistem, terdapat berbagai `privilege` dan `role` ketika mengakses fitur. Otorisasi digunakan untuk memastikan setiap `role` mengakses fitur sesuai dengan `privilage` yang ditetapkan. Contoh penerapan otorisasi dalam django adalah menerapkan decorators dan middlewares pada suatu fitur.
+
+Autentikasi dan otorisasi sangat penting. Autentikasi dibutuhkan untuk menentukan `user` yang sedang mengakses sistem, sehingga sistem dapat menentukan `role`, `privilage`, dan `data` yang sesuai dengan `active user`. Dengan adanya autentikasi, otorisasi dapat berjalan sesuai dengan `role` dan `privilage` yang sesuai dengan `active user`.
+
+### Pertanyaan 3
+
+**Apa itu cookies dalam konteks aplikasi web, dan bagaimana Django menggunakan cookies untuk mengelola data sesi pengguna?**
+
+Dalam konteks aplikasi web, `Cookies` merupakan data teks kecil yang berisi informasi sesi `user` yang dibuat oleh `server side` dan disimpan oleh `client side`. Dalam konteks Django, cookies biasanya disimpan dalam bentuk `SessionID`. `SessionID` yang disimpan di `client side` dikirimkan ke `server` ketika meminta `HTTP request`untuk memastikan bahwa `user` memiliki `role` dan `privilage` yang sesuai, serta memastikan bahwa `resource` yang diakses sesuai dengan `active user`.
+
+### Pertanyaan 4
+
+**Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai?**
+
+Dengan menerapkan `zero trust security` penggunaan cookies secara default pastinya terdapat risiko potensial yang harus diwaspadai. Berikut beberapa hal yang harus diwaspadai:
+
+- Pada dasarnya HTTP, tidak dapat menvalidasi apakah suatu client sudah terautentikasi, autentikasi biasanya dilakukan oleh mekanisme tambahan di `server side` yang _credentialsnya_ disimpan menggunakan cookies. Oleh karena itu, cookies sangat mungkin digunakan untuk `session hijacking` jika terjadi `cookies theft`. Pencegahan untuk hal tersebut, adalah memastikan cookies terhapus ketika _logout_, cookies memiliki `expired time`.
+
+- Cookies memiliki risiko jika tidak dilakukan enkripsi, pada dasarnya cookies berisi informasi sensitif yang digunakan untuk autentikasi, sehingga dibutuhkan enkripsi untuk mencegah terjadi `sniffing` melalui `network traffic`.
+
+### Pertanyaan 5
+
+**Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
+
+1. Langkah pertama yang dilakukan adalah mengimplementasikan registrasi dengan menambahkan fungsi `register` di `views.py`.
+
+```python
+def register(request) :
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    response = {'form' : form}
+    return render(request, 'register.html', response)
+```
+
+2. Membuat fungsi `login_user` di `views.py`
+
+```python
+def login_user(request) :
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            response = HttpResponseRedirect(reverse('main:index'))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+        else:
+            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
+
+    response = {}
+    return render(request, 'login.html', response)
+```
+
+3. Membuat fungsi `logout_user` di `views.py`
+
+```python
+   def logout_user(request):
+      logout(request)
+      response = HttpResponseRedirect(reverse('main:login'))
+      response.delete_cookie('last_login')
+      return response
+```
+
+4. Setelah mengimplementasikan ketiga hal tersebut di `views.py` langkah selanjutnya adalah membuat templates `login.html`, `register.html` di folder templates.
+
+5. Membuat routing untuk login, register, logout.
+
+```python
+    path("login/", login_user, name="login"),
+    path("logout/", logout_user, name="logout"),
+    path("register/", register, name="register"),
+    path("sold-product/", sold_product, name="sold-product")
+```
+
+6. Menambah decorators `login_requried` untuk fungsi yang membutuhkan login.
+
+7. Menambahkan relation user untuk model `product` dan `category`.
+
+8. Memodifikasi fungsi index di `views.py` untuk memastikan product yang di get, sesuai dengan `active user`
+
+```python
+def index(request):
+    list_all_product = Product.objects.select_related("category").values(
+        "id",
+        "name",
+        "description",
+        "price",
+        "stock",
+        "sold",
+        "category__name",
+    ).filter(user=request.user)
+    response = {
+        "applicationName": "KelolaToko",
+        "nama": request.user.username,
+        "class": "PBP-F",
+        "productData": {
+            "count": len(list_all_product),
+            "products": list_all_product,
+        },
+        "last_login" : request.COOKIES['last_login']
+    }
+    return render(request, "index.html", response)
+```
+
+9. Memodifaksi `Form` untuk `add_category`, `delete_category`, `add_product` untuk memastikan category dan product yang bisa diakses sesuai dengan `active user`. Hal utama yang ditambakan adalah custom constructor untuk ketiga form tersebut.
+   **Add Product / Delete Category**
+
+```python
+  category = ModelChoiceField(queryset=Category.objects.none(), to_field_name="name", required=False,
+                                empty_label="null")
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = Category.objects.filter(user=user)
+```
+
+**Delete Product**
+
+```python
+  product = ModelChoiceField(queryset=Product.objects.none(), to_field_name="name", required=True, empty_label=None)
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['product'].queryset = Product.objects.filter(user=user)
+```
+
+10. Memodifikasi fungsi `add_product`, `add_category` untuk memastikan data disimpan dengan user yang sesuai dengan `active user`
+
+**add_category**
+
+```python
+   category = form.save(commit=False)
+   category.user = request.user
+   category.save()
+```
+
+11. Mengimplementasikan cookies `last login`, dan active user di fungsi index serta templates.
+
+12. Membuat actions button untuk mengurangi stock yang ada dan menambahkan sold untuk product.
+
+**add_product**
+
+```python
+   product = form.save(commit=False)
+   product.user = request.user
+   product.save()
+```
+
+<br>
+
+---
+
 ## Tugas 3
 
 ### Pertanyaan 1
 
 **Apa perbedaan antara form`POST`dan form`GET`dalam Django?**
 
-Perbedaan utama dalam form `POST` dan form `GET` adalah *HTTP request method* yang digunakan. Sesuai dengan namanya,
-form `POST` menggunakan HTTP *request method* `POST` yang biasanya digunakan untuk mengirimkan data ke server yang
-terdapat di `body` request. Sedangkan form `GET` menggunakan HTTP *request method* `GET` yang biasanya digunakan untuk
+Perbedaan utama dalam form `POST` dan form `GET` adalah _HTTP request method_ yang digunakan. Sesuai dengan namanya,
+form `POST` menggunakan HTTP _request method_ `POST` yang biasanya digunakan untuk mengirimkan data ke server yang
+terdapat di `body` request. Sedangkan form `GET` menggunakan HTTP _request method_ `GET` yang biasanya digunakan untuk
 mengambil data dari server untuk digunakan pengguna. Berikut adalah perbedaan lain antara form `POST` dan form `GET`:
 
 - Dikarenakan `GET` menggunakan URL, sehingga terdapat batasan (maksimal 2048 characters), sedangkan `POST` tidak ada
   batasan.
-- *Query* untuk `GET`  ditampilkan di URL, sedangkan `POST` tidak ada query yang ditampilkan di URL.
+- _Query_ untuk `GET` ditampilkan di URL, sedangkan `POST` tidak ada query yang ditampilkan di URL.
 - Untuk mengirimkan data dengan `POST` menggunakan request body, sedangkan `GET` menggunakan query paramater di URL.
 
 ### Pertanyaan 2
@@ -41,32 +228,33 @@ ditampilkan (`render`) ke pengguna.
 
 JSON sering digunakan dalam pertukaran data antara aplikasi web modern karena JSON merupakan Javascript Object Notation
 yang tentunya `native` dan mudah diproses oleh javascript. Pada umumnya web modern sekarang menggunakan javascript untuk
-tampilan (*front-end*) sehingga dalam pemrosesan data ke pengguna lebih efisien, cepat, dan mudah (dikarenakan *native
-javascript object*). Selain itu, web modern banyak yang menggunakan REST API framework yang sangat mendukung penggunaan
+tampilan (_front-end_) sehingga dalam pemrosesan data ke pengguna lebih efisien, cepat, dan mudah (dikarenakan _native
+javascript object_). Selain itu, web modern banyak yang menggunakan REST API framework yang sangat mendukung penggunaan
 JSON (library yang tersedia banyak).
 
 ### Pertanyaan 4
 
-**Jelaskan bagaimana cara kamu mengimplementasikan_checklist_di atas secara_step-by-step_(bukan hanya sekadar mengikuti
+**Jelaskan bagaimana cara kamu mengimplementasikan*checklist_di atas secara_step-by-step*(bukan hanya sekadar mengikuti
 tutorial).**
 
 1. Pertama, dikarenakan ada perubahan code editor yang digunakan, sehingga saya harus mengatur ulang virtual
    environment.
+
    ```bash
-	#remove existing venv
+   #remove existing venv
    conda env remove --name tugas-2-env
 
-	#create new venv
-	conda create -p ./env
+   #create new venv
+   conda create -p ./env
 
-	#install python 3.11
-	conda install python=3.11
+   #install python 3.11
+   conda install python=3.11
 
-	#pip install
-	pip install -r requirements.txt
+   #pip install
+   pip install -r requirements.txt
 
-	#activate env
-	conda activate ./env
+   #activate env
+   conda activate ./env
 
    ```
 
@@ -85,7 +273,7 @@ tutorial).**
 5. membuat fungsi di `views.py` untuk setiap form.
 6. membuat fungsi untuk mengembalikan data (get all product, get all category, get product by ID, get category by ID)
    dalam bentuk XML dan JSON.
-8. membuat routing untuk setiap form di `urls.py` dan fungsi mengembalikkan data dalam bentuk XML dan JSON.
+7. membuat routing untuk setiap form di `urls.py` dan fungsi mengembalikkan data dalam bentuk XML dan JSON.
 
 ### Screenshot postman
 
