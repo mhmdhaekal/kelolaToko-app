@@ -30,20 +30,38 @@
       </tr>
 
       {% for product in productData.products %}
-      <form method="POST" action="{% url 'main:sold-product' %}">
-        {% csrf_token %}
-        <input type="hidden" name="product_id" value="{{ product.id }}" />
-        <tr>
-          <td>{{ product.id }}</td>
-          <td>{{ product.name }}</td>
-          <td class="description-table">{{ product.description }}</td>
-          <td>{{ product.price }}</td>
-          <td>{{ product.stock }}</td>
-          <td>{{ product.sold }}</td>
-          <td>{{ product.category__name }}</td>
-          <td><button type="submit">Sell</button></td>
-        </tr>
-      </form>
+
+      <tr>
+        <td>{{ product.id }}</td>
+        <td>{{ product.name }}</td>
+        <td class="description-table">{{ product.description }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.stock }}</td>
+        <td>{{ product.sold }}</td>
+        <td>{{ product.category__name }}</td>
+        <td>
+          <form method="POST" action="{% url 'main:increment-product' %}">
+            {% csrf_token %}
+            <input
+              type="hidden"
+              name="product_id"
+              value="{{ product.id }}"
+            /><button class="button" type="submit">add</button>
+          </form>
+
+          <form method="POST" action="{% url 'main:sold-product' %}">
+            {% csrf_token %}
+            <input
+              type="hidden"
+              name="product_id"
+              value="{{ product.id }}"
+            /><button class="button" style="margin-top: 10px" type="submit">
+              Sell
+            </button>
+          </form>
+        </td>
+      </tr>
+
       {% endfor %}
     </table>
   </div>

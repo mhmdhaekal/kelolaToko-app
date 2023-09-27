@@ -1,7 +1,7 @@
 from django.urls import path
 from main.views import index, add_product, delete_product, add_category, delete_category, get_product_xml, \
     get_product_json, get_product_by_id_xml, get_category_by_id_json, get_category_by_id_xml, get_product_by_id_json, \
-    get_category_json, get_category_xml, login_user, logout_user, register, sold_product
+    get_category_json, get_category_xml, login_user, logout_user, register, sold_product, increment_product
 
 app_name = "main"
 
@@ -22,5 +22,6 @@ urlpatterns = [
     path("login/", login_user, name="login"),
     path("logout/", logout_user, name="logout"),
     path("register/", register, name="register"),
-    path("sold-product/", sold_product, name="sold-product")
+    path("sold-product/", sold_product, name="sold-product"),
+    path("increment-product/", increment_product, name="increment-product")
 ]

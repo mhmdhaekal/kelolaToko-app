@@ -183,10 +183,20 @@ def sold_product(request):
     if (request.method == "POST"):
         product_id = request.POST.get("product_id")
         product = Product.objects.get(id=product_id)
-        product.stock -= 1
-        product.sold += 1
+        if (product.stock > 0):
+            product.stock -= 1
+            product.sold += 1
         product.save()
         return HttpResponseRedirect(reverse("main:index"))
     return HttpResponseRedirect(reverse("main:index"))
-        
+    
+@login_required(login_url="/login")    
+def increment_product(request):
+    if(request.method == "POST"):
+        product_id = request.POST.get("product_id")
+        product = Product.objects.get(id=product_id)
+        product.stock += 1
+        product.save()
+        return HttpResponseRedirect(reverse("main:index"))
+    return HttpResponseRedirect(reverse("main:index"))
     
