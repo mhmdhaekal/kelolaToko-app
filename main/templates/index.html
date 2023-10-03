@@ -1,52 +1,70 @@
 {% extends "base.html" %} {% block content %}
-<h1 class="title" id="appplication-name">{{ applicationName }}</h1>
-<p class="name-class" id="name">Nama : {{ nama }}</p>
-<p class="name-class" id="class">Kelas : {{ class }}</p>
-<p class="name-class" id="class">Last login : {{ last_login }}</p>
 
-<a href="{% url 'main:logout' %}">
-  <button class="button">Logout</button>
-</a>
+<div class="relative flex flex-col gap-4 px-4">
+  <div class="relative flex flex-col gap-2">
+    <h1 class="font-InterBold text-l md:text-2xl">Welcome back, {{nama}}</h1>
+    <h1 class="font-Inter text-gray-400 text-s">Class : {{class}}</h1>
+    <h1 class="font-Inter text-gray-400 text-s">Last login : {{last_login}}</h1>
+  </div>
 
-<h2 style="margin-top: 50px; text-align: center">Daftar Produk</h2>
-<div class="products" id="products">
-  {% if productData %}
+  <div class="relative flex flex-col items-center md:items-start">
+    <a href="{% url 'main:logout' %}">
+      <button
+        class="p-2 rounded-[10px] text-[14px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold mt-4 w-36"
+      >
+        Logout
+      </button>
+    </a>
+  </div>
+
   <div>
-    <p>
-      Terdapat
-      <span style="font-weight: bold">{{ productData.count }}</span> produk pada
-      sistem kelolaToko
-    </p>
-    <table class="product-table">
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Stock</th>
-        <th>Sold</th>
-        <th>Category</th>
-        <th>Actions</th>
-      </tr>
+    <h1 class="font-InterBold text-center text-[28px] mt-4">Daftar Produk</h1>
+  </div>
 
+  <div>
+    {% if productData %}
+    <p class="font-InterBold text-[16px]">
+      Terdapat {{productData.count}} produk pada sistem kelolaToko
+    </p>
+
+    <div
+      class="relative grid grid-flow-row grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-8 gap-6 mt-4"
+    >
       {% for product in productData.products %}
 
-      <tr>
-        <td>{{ product.id }}</td>
-        <td>{{ product.name }}</td>
-        <td class="description-table">{{ product.description }}</td>
-        <td>{{ product.price }}</td>
-        <td>{{ product.stock }}</td>
-        <td>{{ product.sold }}</td>
-        <td>{{ product.category__name }}</td>
-        <td>
+      <div
+        class="flex flex-col w-full border-2 border-purple-200 hover:shadow-xl shadow-sm transition-all rounded-[10px] px-5 py-3 bg-white"
+      >
+        <h1 class="font-InterBold text-[24px]">{{ product.name }}</h1>
+        <p class="font-Inter text-gray-400 text-[12px]">
+          Category : {{ product.category__name }}
+        </p>
+        <p class="font-Inter text-justify text-[16px]">
+          {{ product.description }}
+        </p>
+        <p class="font-InterBold text-justify text-[16px]">
+          Rp{{ product.price }}
+        </p>
+        <p class="font-Inter text-gray-800 text-[14px]">
+          Stock : {{ product.stock }}
+        </p>
+        <p class="font-Inter text-gray-800 text-[14px]">
+          Sold : {{ product.sold }}
+        </p>
+
+        <div class="flex flex-col gap-4 flex-end px-4 mt-4">
           <form method="POST" action="{% url 'main:increment-product' %}">
             {% csrf_token %}
             <input
               type="hidden"
               name="product_id"
               value="{{ product.id }}"
-            /><button class="button" type="submit">add</button>
+            /><button
+              class="p-2 rounded-[10px] text-[14px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full"
+              type="submit"
+            >
+              Add Stock
+            </button>
           </form>
 
           <form method="POST" action="{% url 'main:sold-product' %}">
@@ -55,39 +73,59 @@
               type="hidden"
               name="product_id"
               value="{{ product.id }}"
-            /><button class="button" style="margin-top: 10px" type="submit">
-              Sell
+            /><button
+              class="p-2 rounded-[10px] text-[14px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full"
+              type="submit"
+            >
+              Sell Product
             </button>
           </form>
-        </td>
-      </tr>
-
+        </div>
+      </div>
       {% endfor %}
-    </table>
+    </div>
+
+    {% endif %}
   </div>
-  {% endif %}
+
+  <div
+    class="relative flex flex-col gap-2 lg:gap-4 lg:items-center lg:mt-10 mt-4"
+  >
+    <div class="relative flex flex-col lg:flex-row gap-2 lg:gap-4">
+      <a href="{% url 'main:add-product' %}">
+        <button
+          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
+        >
+          Tambah Produk
+        </button>
+      </a>
+
+      <a href="{% url 'main:delete-product' %}">
+        <button
+          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
+        >
+          Hapus Produk
+        </button>
+      </a>
+    </div>
+
+    <div class="relative flex flex-col lg:flex-row lg:gap-4 gap-2">
+      <a href="{% url 'main:add-category' %}">
+        <button
+          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
+        >
+          Tambah Kategori
+        </button>
+      </a>
+
+      <a href="{% url 'main:delete-category' %}">
+        <button
+          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
+        >
+          Hapus Kategori
+        </button>
+      </a>
+    </div>
+  </div>
 </div>
-
-<div class="button-section">
-  <div class="product-button">
-    <a href="{% url 'main:add-product' %}">
-      <button class="button">Tambah Produk</button>
-    </a>
-
-    <a href="{% url 'main:delete-product' %}">
-      <button class="button">Hapus Produk</button>
-    </a>
-  </div>
-
-  <div class="category-button">
-    <a href="{% url 'main:add-category' %}">
-      <button class="button">Tambah Kategori</button>
-    </a>
-
-    <a href="{% url 'main:delete-category' %}">
-      <button class="button">Hapus Kategori</button>
-    </a>
-  </div>
-</div>
-
 {% endblock content %}

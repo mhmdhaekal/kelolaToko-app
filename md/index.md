@@ -6,6 +6,151 @@ PBP-F
 
 2206817490
 
+
+## Tugas 5
+
+### Pertanyaan 1
+
+**Jelaskan manfaat dari setiap element selector dan kapan waktu yang tepat untuk menggunakannya.**
+
+- **Type selector / Tag selector**
+  ```css
+  p {
+    color: white;
+  }
+  ```
+
+  `Type / tag selector` merupakan selector untuk memilih seluruh komponen berdasarkan tag. Waktu yang tepat untuk menggunakan `type/tag selector` adalah ketika melakukan generelasasi style sesuai dengan tag html.
+
+- **Class selector**
+```css
+.className{
+    color: white;
+}
+```
+
+`Class selector` merupakan selector untuk memilih class, dalam satu page beberapa komponen dapat memiliki class yang sama. `Class selector` menggunakan identifier `.className` untuk memilih nama class. Waktu yang tepat untuk menggunakan `Class selector` adalah ketika ingin memilih beberapa komponen dengan class yang sama. `Class selector` sangat direkomendasikan dalam implementasi CSS.
+
+- **Id Selector**
+```css
+#idName{
+    color: white;
+}
+```
+
+`Id selector` merupakan selector untuk memilih id, dalam satu page id biasanya unik. `Id selector` menggunakan identifier `#idName` untuk memilih nama id. Waktu yang tepat untuk menggunakan `Id selector` adalah ketika memilih tepat satu komponen. `Id selector` tidak direkomendasikan dalam implementasi CSS.
+
+### Pertanyaan 2
+
+**Jelaskan HTML5 Tag yang kamu ketahui.**
+
+- `<!DOCTPYE html>` - untuk mendeklarasikan html di awal file html.
+- `<html>` - tag utama pada html.
+- `<head>` - tag untuk mendeklrasikan metadata dalam files html, seperti tags `<title>`, `<meta>`, `<link>`.
+-  `<title>` - mengubah title dalam suatu pages, biasanya dapat dilihat dari title di browser.
+-  `<body>` - tempat dimana seluruh komponen html dibuat.
+-  `<h1>, <h2>, <h3>` - heading, semakin besar angka heading, maka semakin kecil fontnya.
+-  `<p>` - paragraph.
+-  `<a>` - mendefiniskan hyperlink, biasanya digunakan untuk redirect menggunakan link.
+-  `<img>` - memasukkan foto ke dalam html.
+-  `<br>` - break.
+-  `<button>` - mendifinisikan sebuah tombol.
+-  `<form>` - membuat form dalam dokumen yang dapat terdiri dari `<input>` dan `<textarea>`.
+- `<script>` - mendefinisikan script `javascript` atau refefrences ke suatu script.
+- `<div>` - div merupakan suatu kontainer, yang dapat diisi dengan komponen lain.
+
+## Pertanyaan 3
+
+**Jelaskan perbedaan antara margin dan padding.**
+
+`Margin` dan `Padding` merupakan styling css untuk mengatur jarak dalam elemen-elemen HTML. Perbedaan utama `margin` dan `padding` adalah `margin` mengatur jarak berdasarkan jarak luar dari suatu elemen, sedangkan `padding` mengatur jarak berdasarkan jarak dalam dari suatu elemen. `Margin` biasanya digunakan untuk memberi jarak antar elemen, sedangkan `padding` digunakan untuk memberi jarak suatu elemen dengan parent element (`button`, `div`).
+
+## Pertanyaan 4
+
+**Jelaskan perbedaan antara framework CSS Tailwind dan Bootstrap. Kapan sebaiknya kita menggunakan Bootstrap daripada Tailwind, dan sebaliknya?**
+
+Perbedaan utama `tailwind css` dan `bootstrap` terdapat di `predefined` komponen. Secara bawaan `bootsrap` memiliki komponen yang sudah didefinisikan dan tinggal digunakan (button, table, navbar). Sedangkan, `tailwind css` tidak memiliki `predifined` komponen, pendekatan tailwind css adalah inline css, sehingga tailwind css sangat flexibel dan memiliki kustomisasi yang sangat luas. Tailwindcss lebih baik digunakan jika ingin membuat suatu komponen berdasrkan desain yang sudah ada, tetapi tidak ingin membuat css di tempat lain. Sedangkan, `bootstrap` lebih baik digunakan jika ingin menggunakan `predefined` komponen yang sudah disediakan.
+
+## Pertanyaan 5
+
+**Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
+
+1. Inisialisasi dan setup tailwindcss.
+2. Menginstall tailwindcss dengan menggunakan `nodemodules` dengan command:
+   ```shell
+   bun install -D tailwindcss
+   ```
+4. init tailwindcss
+   ```
+   bunx tailwindcss init
+   ```
+
+5. Menambahkan files `input.css` di dalam folder `static`. Dengan isi:
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Regular.ttf");
+}
+
+@font-face {
+  font-family: "InterBold";
+  src: url("../fonts/Inter-Bold.ttf");
+}
+```
+
+4. Mengubah konfigurasi tailwind di `tailwind.config.js`
+   ```js
+   /** @type {import('tailwindcss').Config} */
+   module.exports = {
+    content: [
+      './templates/*.html', './main/templates/*.html'
+      ],
+      theme: {
+        extend: {
+      fontFamily: {
+          Inter : ['Inter'],
+          InterBold : ['InterBold']
+        }
+    },
+    },
+    plugins: [],}
+   ```
+
+5. menambahkan script dev di `package.json`
+```json
+{
+  "scripts": {
+    "dev": "npx tailwindcss -i ./main/static/src/input.css -o ./main/static/src/styles.css --watch"
+   },
+  "dependencies": {},
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}
+```
+
+6. menjalankan tailwindcss di terminal.
+```bash
+bun run dev
+```
+7. modifikasi base.htmk dengan menambahkan:
+```html
+...
+ <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'src/styles.css' %}"
+    />
+...
+```
+8. Menambahkan styling untuk setiap halaman.
+   
+<br>
+
 ---
 
 ## Tugas 4

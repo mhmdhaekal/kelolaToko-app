@@ -1,19 +1,34 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>kelolaToko</title>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-        rel="stylesheet"
-        type="text/css"
-        href="{% static 'styles/index.css' %}"
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'src/styles.css' %}"
     />
     {% block meta %} {% endblock meta %}
-</head>
+  </head>
 
-<body>
-{% block content %} {% endblock content %}
-</body>
+  <body class="bg-[#EFF4FF]">
+    <nav
+      class="z-50 sticky inset-0 flex flex-col bg-white w-full items-center justify-center"
+    >
+      <div
+        class="flex w-full gap-16 px-4 py-3 justify-center"
+      >
+        <a href={%url 'main:index'%}>
+          <h1 class='font-InterBold text-m lg:text-xl'>kelolaToko</h1>
+        </a>
+      </div>
+    </nav>
+
+    <div class='px-2 py-4 lg:px-4'>
+        {% block content %} {% endblock content %}
+    </div>
+   
+  </body>
 </html>

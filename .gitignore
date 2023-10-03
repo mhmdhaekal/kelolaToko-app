@@ -140,3 +140,5 @@ GitHub.sublime-settings
 .idea
 pyrightconfig.json
 .fleet
+node_modules
+bun.lockb

@@ -2,51 +2,57 @@
 <title>Login</title>
 {% endblock meta %} {% block content %}
 
-<div class="login">
-  <h1>Login</h1>
+<div class="relative py-4 w-full flex justify-center items-center">
+  <div class="relative flex flex-col items-center top-20">
+    <h1 class="flex font-InterBold text-4xl text-center">Welcome Back</h1>
 
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>Username:</td>
-        <td>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            class="form-control"
-          />
-        </td>
-      </tr>
+    <form method="POST" action="{%url 'main:login'%}">
+      {% csrf_token %}
 
-      <tr>
-        <td>Password:</td>
-        <td>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            class="form-control"
-          />
-        </td>
-      </tr>
+      <div class="flex flex-col gap-4 w-[250px] mt-10">
+        <input
+          class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+          placeholder="Username"
+          name="username"
+        />
 
-      <tr>
-        <td></td>
-        <td><input class="btn login_btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
+        <input
+          class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc]"
+          placeholder="Password"
+          name="password"
+          type="password"
+        />
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a href="{% url 'main:register' %}">Register Now</a>
+        <button
+          type="submit"
+          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold mt-4"
+          >
+          Login
+        </button>
+    </form>
+
+  
+    <a
+      type="submit"
+      class="p-2 rounded-[10px] text-[16px] bg-[#3d3e50] text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+      href="{% url 'main:register' %}"
+    >
+      Don't have an account?
+    </a>
+
+    <div class='flex flex-col gap-4'>
+      {% if messages %}
+      <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+    </div>
+    </div>
+
+  </div>
 </div>
 
 {% endblock content %}
