@@ -6,6 +6,49 @@ PBP-F
 
 2206817490
 
+## Tugas 6
+
+### Pertanyaan 1
+
+**Jelaskan perbedaan antara asynchronous programming dengan synchronous programming.**
+
+Perbedaan utama antara `asynchronous prograaming` dengan `synchronous programming` adalah cara kerja suatu program dalam mengeksekusi kode. Pada `syncrhonous prograaming` seluruh kode/perintah akan dijalankan secara `sequential` sehingga seluruh memungkinkan terjadi penurunan performa jika suatu perintah membutuhkan waktu untuk menjalankan perintah/mengambil data dari eksternal. Sedangkan `asynchronous programming` memungkinkan suatu kode berjalan secara bersamaan, sehingga waktu yang lama untuk menjalankan perintah/mengambil data dari eksternal dapat dimanfaatkan oleh perintah lain.
+
+### Pertanyaan 2
+
+**Dalam penerapan JavaScript dan AJAX, terdapat penerapan paradigma event-driven programming. Jelaskan maksud dari paradigma tersebut dan sebutkan salah satu contoh penerapannya pada tugas ini.**
+
+Event driven programming, adalah paragdima pemrograman yang menggunakan mengeksekusi program berdasarkan event atau pesan `user` contohnya adalah button, mouse clicks, ataupun repsonse dalam http request. Penerapan event-driven programming pada tugas ini adalah penggunaan response `getProductData()` dan pemanggilan function `submitData()` ketika pengguna menekan tombol create pada `createModal`.
+
+### Pertanyaan 3
+
+**Jelaskan penerapan asynchronous programming pada AJAX.**
+
+Penerapan asynchronous programming pada AJAX adalah ketika mengambil data dari  `database` melalui fungsi di `views.py` salah satu contohnya pada kelolaToko adalah
+
+```javascript
+ async function getProductData() {
+    const response = await fetch("{% url 'main:get-product-json' %}");
+    const data = await response.json();
+    return data;
+  }
+```
+
+### Pertanyaan 4
+
+**Pada PBP kali ini, penerapan AJAX dilakukan dengan menggunakan Fetch API daripada library jQuery. Bandingkanlah kedua teknologi tersebut dan tuliskan pendapat kamu teknologi manakah yang lebih baik untuk digunakan**
+
+jquery merupakan suatu library dalam javascript yang berfungsi untuk menjalankan script pada client side di HTML. Namun, jquery memeiliki load yang besar dan performa yang tidak terlalu baik dibandingkan fetch api. Hal tersebut disebabkan fetch API merupakan native dari javasript dan menggunakan `async function`.
+
+### Pertanyaan 5
+
+**Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
+
+- Membuat tag `script` di index.html dan membuat beberapa fungsi async javascript untuk mengambil data produk, kategori serta menghapus produk dan kategori.
+- Membuat modal untuk membuat produk dan kategori, serta menghapus produk dan kategori.
+- Membuat function di `views.py` untuk mengambil data menggunakan json.
+- Membuat function di `views.py` untuk membuat produk dan kategori, serta menghapus produk dan kategori.
+- Membuat routing untuk seluruh fungsi di `urls.py`
 
 ## Tugas 5
 

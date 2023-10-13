@@ -1,7 +1,28 @@
 from django.urls import path
-from main.views import index, add_product, delete_product, add_category, delete_category, get_product_xml, \
-    get_product_json, get_product_by_id_xml, get_category_by_id_json, get_category_by_id_xml, get_product_by_id_json, \
-    get_category_json, get_category_xml, login_user, logout_user, register, sold_product, increment_product
+from main.views import (
+    index,
+    add_product,
+    delete_product,
+    add_category,
+    delete_category,
+    get_product_xml,
+    get_product_json,
+    get_product_by_id_xml,
+    get_category_by_id_json,
+    get_category_by_id_xml,
+    get_product_by_id_json,
+    get_category_json,
+    get_category_xml,
+    login_user,
+    logout_user,
+    register,
+    sold_product,
+    increment_product,
+    create_product_ajax,
+    create_category_ajax,
+    delete_product_ajax,
+    delete_category_ajax,
+)
 
 app_name = "main"
 
@@ -14,14 +35,26 @@ urlpatterns = [
     path("get-product/xml", get_product_xml, name="get-product-xml"),
     path("get-product/json", get_product_json, name="get-product-json"),
     path("get-product/xml/<str:id>", get_product_by_id_xml, name="get-product-id-xml"),
-    path("get-product/json/<str:id>", get_product_by_id_json, name="get-product-id-json"),
+    path(
+        "get-product/json/<str:id>", get_product_by_id_json, name="get-product-id-json"
+    ),
     path("get-category/xml", get_category_xml, name="get-category-xml"),
     path("get-category/json", get_category_json, name="get-category-json"),
-    path("get-category/xml/<str:id>", get_category_by_id_xml, name="get-category-id-xml"),
-    path("get-category/json/<str:id>", get_category_by_id_json, name="get-category-id-json"),
+    path(
+        "get-category/xml/<str:id>", get_category_by_id_xml, name="get-category-id-xml"
+    ),
+    path(
+        "get-category/json/<str:id>",
+        get_category_by_id_json,
+        name="get-category-id-json",
+    ),
     path("login/", login_user, name="login"),
     path("logout/", logout_user, name="logout"),
     path("register/", register, name="register"),
     path("sold-product/", sold_product, name="sold-product"),
-    path("increment-product/", increment_product, name="increment-product")
+    path("increment-product/", increment_product, name="increment-product"),
+    path("create-product-ajax/", create_product_ajax, name="create-product-ajax"),
+    path("create-category-ajax/", create_category_ajax, name="create-category-ajax"),
+    path("delete-product-ajax/", delete_product_ajax, name="delete-product-ajax"),
+    path("delete-category-ajax/", delete_category_ajax, name="delete-category-ajax"),
 ]

@@ -22,110 +22,572 @@
   </div>
 
   <div>
-    {% if productData %}
-    <p class="font-InterBold text-[16px]">
-      Terdapat {{productData.count}} produk pada sistem kelolaToko
-    </p>
+    <p class="font-InterBold text-[16px]" id="count"></p>
 
     <div
       class="relative grid grid-flow-row grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-8 gap-6 mt-4"
-    >
-      {% for product in productData.products %}
-
-      <div
-        class="flex flex-col w-full border-2 border-purple-200 hover:shadow-xl shadow-sm transition-all rounded-[10px] px-5 py-3 bg-white"
-      >
-        <h1 class="font-InterBold text-[24px]">{{ product.name }}</h1>
-        <p class="font-Inter text-gray-400 text-[12px]">
-          Category : {{ product.category__name }}
-        </p>
-        <p class="font-Inter text-justify text-[16px]">
-          {{ product.description }}
-        </p>
-        <p class="font-InterBold text-justify text-[16px]">
-          Rp{{ product.price }}
-        </p>
-        <p class="font-Inter text-gray-800 text-[14px]">
-          Stock : {{ product.stock }}
-        </p>
-        <p class="font-Inter text-gray-800 text-[14px]">
-          Sold : {{ product.sold }}
-        </p>
-
-        <div class="flex flex-col gap-4 flex-end px-4 mt-4">
-          <form method="POST" action="{% url 'main:increment-product' %}">
-            {% csrf_token %}
-            <input
-              type="hidden"
-              name="product_id"
-              value="{{ product.id }}"
-            /><button
-              class="p-2 rounded-[10px] text-[14px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full"
-              type="submit"
-            >
-              Add Stock
-            </button>
-          </form>
-
-          <form method="POST" action="{% url 'main:sold-product' %}">
-            {% csrf_token %}
-            <input
-              type="hidden"
-              name="product_id"
-              value="{{ product.id }}"
-            /><button
-              class="p-2 rounded-[10px] text-[14px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full"
-              type="submit"
-            >
-              Sell Product
-            </button>
-          </form>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-
-    {% endif %}
+      id="products"
+    ></div>
   </div>
 
   <div
     class="relative flex flex-col gap-2 lg:gap-4 lg:items-center lg:mt-10 mt-4"
   >
     <div class="relative flex flex-col lg:flex-row gap-2 lg:gap-4">
-      <a href="{% url 'main:add-product' %}">
-        <button
-          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
-        >
-          Tambah Produk
-        </button>
-      </a>
+      <button
+        data-modal-target="createModal"
+        data-modal-toggle="createModal"
+        class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
+      >
+        Tambah Produk
+      </button>
 
-      <a href="{% url 'main:delete-product' %}">
-        <button
-          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
-        >
-          Hapus Produk
-        </button>
-      </a>
+      <button
+        data-modal-target="deleteProductModal"
+        data-modal-toggle="deleteProductModal"
+        class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
+      >
+        Hapus Produk
+      </button>
     </div>
 
     <div class="relative flex flex-col lg:flex-row lg:gap-4 gap-2">
-      <a href="{% url 'main:add-category' %}">
-        <button
-          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
-        >
-          Tambah Kategori
-        </button>
-      </a>
+      <button
+        class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
+        data-modal-target="createCategoryModal"
+        data-modal-toggle="createCategoryModal"
+      >
+        Tambah Kategori
+      </button>
 
-      <a href="{% url 'main:delete-category' %}">
-        <button
-          class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
-        >
-          Hapus Kategori
-        </button>
-      </a>
+      <button
+        data-modal-target="deleteCategoryModal"
+        data-modal-toggle="deleteCategoryModal"
+        class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full lg:w-48"
+      >
+        Hapus Kategori
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="createModal"
+    tabindex="-1"
+    aria-hidden="true"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+  >
+    <div class="relative w-full max-w-2xl max-h-full">
+      <div class="relative bg-white rounded-lg shadow">
+        <div class="flex justify-between p-4 border-b rounded-t">
+          <h3 class="text-xl font-InterBold text-black text-center">
+            Create Product
+          </h3>
+          <button
+            type="button"
+            class="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center hover:bg-gray-600 hover:text-white"
+            data-modal-hide="createModal"
+          >
+            <svg
+              class="w-3 h-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+
+        <div class="p-6 flex flex-col w-full">
+          <div class="">
+            <input
+              class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+              placeholder="Product Name"
+              id="productName"
+              style="width: 75%"
+            />
+          </div>
+          <div class="mt-4">
+            <textarea
+              class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+              placeholder="Product Description"
+              id="productDescription"
+              style="width: 100%"
+            ></textarea>
+          </div>
+
+          <div class="mt-4">
+            <input
+              class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+              placeholder="Price"
+              id="productPrice"
+              style="width: 75%"
+              type="number"
+            />
+
+            <div class="mt-4">
+              <input
+                class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+                placeholder="Stock"
+                name="stock"
+                id="productStock"
+                style="width: 75%"
+                type="number"
+              />
+
+              <div class="mt-4">
+                <select
+                  class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+                  name="category"
+                  style="width: 75%"
+                  id="category"
+                ></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center p-6 space-x-2">
+            <button
+              data-modal-hide="createModal"
+              id="submitProduct"
+              class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+            >
+              Create
+            </button>
+            <button
+              data-modal-hide="createModal"
+              type="button"
+              class="p-2 rounded-[10px] text-[16px] bg-[#3d3e50] text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="createCategoryModal"
+    tabindex="-1"
+    aria-hidden="true"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+  >
+    <div class="relative w-full max-w-2xl max-h-full">
+      <div class="relative bg-white rounded-lg shadow">
+        <div class="flex justify-between p-4 border-b rounded-t">
+          <h3 class="text-xl font-InterBold text-black text-center">
+            Create Category
+          </h3>
+          <button
+            type="button"
+            class="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center hover:bg-gray-600 hover:text-white"
+            data-modal-hide="createCategoryModal"
+          >
+            <svg
+              class="w-3 h-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+
+        <div class="p-6 flex flex-col w-full justify-center">
+          <div class="">
+            <input
+              class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+              placeholder="Category Name"
+              id="categoryName"
+              style="width: 100%"
+            />
+          </div>
+
+          <div class="flex items-center mx-auto justify-center p-6 space-x-2">
+            <button
+              id="submitCategory"
+              data-modal-hide="createCategoryModal"
+              class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+            >
+              Create
+            </button>
+            <button
+              data-modal-hide="createCategoryModal"
+              type="button"
+              class="p-2 rounded-[10px] text-[16px] bg-[#3d3e50] text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="deleteProductModal"
+    tabindex="-1"
+    aria-hidden="true"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+  >
+    <div class="relative w-full max-w-2xl max-h-full">
+      <div class="relative bg-white rounded-lg shadow">
+        <div class="flex justify-between p-4 border-b rounded-t">
+          <h3 class="text-xl font-InterBold text-black text-center">
+            Delete Product
+          </h3>
+          <button
+            type="button"
+            class="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center hover:bg-gray-600 hover:text-white"
+            data-modal-hide="deleteProductModal"
+          >
+            <svg
+              class="w-3 h-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+
+        <div class="p-6 flex flex-col w-full justify-center">
+          <div class="">
+            <select
+              class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+              name="productSelect"
+              style="width: 100%"
+              id="productSelect"
+            ></select>
+          </div>
+
+          <div class="flex items-center mx-auto justify-center p-6 space-x-2">
+            <button
+              id="submitDeleteProduct"
+              data-modal-hide="deleteProductModal"
+              class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+            >
+              Delete
+            </button>
+            <button
+              data-modal-hide="deleteProductModal"
+              type="button"
+              class="p-2 rounded-[10px] text-[16px] bg-[#3d3e50] text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    id="deleteCategoryModal"
+    tabindex="-1"
+    aria-hidden="true"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+  >
+    <div class="relative w-full max-w-2xl max-h-full">
+      <div class="relative bg-white rounded-lg shadow">
+        <div class="flex justify-between p-4 border-b rounded-t">
+          <h3 class="text-xl font-InterBold text-black text-center">
+            Delete Category
+          </h3>
+          <button
+            type="button"
+            class="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center hover:bg-gray-600 hover:text-white"
+            data-modal-hide="deleteCategoryModal"
+          >
+            <svg
+              class="w-3 h-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+
+        <div class="p-6 flex flex-col w-full justify-center">
+          <div class="">
+            <select
+              class="text-[16px] rounded-[10px] px-2 py-1 border-[rgba(168, 168, 168, 0.5)] border-[1px] hover:border-[#727bfc] transition-all"
+              name="categorySelect"
+              style="width: 100%"
+              id="categorySelect"
+            ></select>
+          </div>
+
+          <div class="flex items-center mx-auto justify-center p-6 space-x-2">
+            <button
+              id="submitDeleteCategory"
+              data-modal-hide="deleteCategoryModal"
+              class="p-2 rounded-[10px] text-[16px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+            >
+              Delete
+            </button>
+            <button
+              data-modal-hide="deleteCategoryModal"
+              type="button"
+              class="p-2 rounded-[10px] text-[16px] bg-[#3d3e50] text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+  async function getProductData() {
+    const response = await fetch("{% url 'main:get-product-json' %}");
+    const data = await response.json();
+    return data;
+  }
+
+  async function showProductData() {
+    const products = await getProductData();
+    const productContainer = document.getElementById("products");
+    productContainer.innerHTML = "";
+    let html = "";
+    let select = document.getElementById("productSelect");
+    let selectHtml = "<option value='None' selected>None</option>";
+
+    for (const product of products.products) {
+      html += `  <div
+          class="flex flex-col w-full border-2 border-purple-200 hover:shadow-xl shadow-sm transition-all rounded-[10px] px-5 py-3 bg-white"
+        >
+          <h1 class="font-InterBold text-[24px]">${product.name}</h1>
+          <p class="font-Inter text-gray-400 text-[12px]">
+            Category : ${product.category__name}
+          </p>
+          <p class="font-Inter text-justify text-[16px]">
+            ${product.description}
+          </p>
+          <p class="font-InterBold text-justify text-[16px]">
+            Rp${product.price}
+          </p>
+          <p class="font-Inter text-gray-800 text-[14px]">
+            Stock :${product.stock}
+          </p>
+          <p class="font-Inter text-gray-800 text-[14px]">
+            Sold : ${product.sold}
+          </p>
+
+          <div class="flex flex-col gap-4 flex-end px-4 mt-4">
+            <form method="POST" action="{% url 'main:increment-product' %}">
+              {% csrf_token %}
+              <input
+                type="hidden"
+                name="product_id"
+                value="${product.id}"
+              /><button
+                class="p-2 rounded-[10px] text-[14px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full"
+                type="submit"
+              >
+                Add Stock
+              </button>
+            </form>
+
+            <form method="POST" action="{% url 'main:sold-product' %}">
+              {% csrf_token %}
+              <input
+                type="hidden"
+                name="product_id"
+                value="${product.id}"
+              /><button
+                class="p-2 rounded-[10px] text-[14px] bg-purple-600 text-white bg-gradiend hover:bg-[#727bfc] transition-all text-center font-InterBold w-full"
+                type="submit"
+              >
+                Sell Product
+              </button>
+            </form>
+          </div>
+        </div>`;
+      selectHtml += `<option value="${product.id}">${product.name}</option>`;
+    }
+    select.innerHTML = selectHtml;
+    productContainer.innerHTML = html;
+    document.getElementById(
+      "count"
+    ).innerHTML = `Terdapat ${products.count} produk pada sistem kelolaToko`;
+  }
+
+  async function setCategorySelect() {
+    const response = await fetch("{% url 'main:get-category-json' %}");
+    const data = await response.json();
+    select = document.getElementById("category");
+    categorySelect = document.getElementById("categorySelect");
+    let html = `<option value="None" selected>None</option>`;
+    for (const category of data) {
+      html += `<option value="${category.pk}">${category.fields.name}</option>`;
+    }
+    select.innerHTML = html;
+    categorySelect.innerHTML = html;
+  }
+
+  async function submitProduct() {
+    const name = document.getElementById("productName").value;
+    const description = document.getElementById("productDescription").value;
+    const price = document.getElementById("productPrice").value;
+    const stock = document.getElementById("productStock").value;
+    const category = document.getElementById("category").value;
+
+    const json = {
+      name: name,
+      description: description,
+      price: price,
+      stock: stock,
+      category: category,
+    };
+
+    const response = await fetch("{% url 'main:create-product-ajax' %}", {
+      method: "POST",
+      body: JSON.stringify(json),
+    }).then((response) => {
+      if (response.status === 200) {
+        alert("Product created successfully");
+        showProductData();
+        document.getElementById("productName").value = "";
+        document.getElementById("productDescription").value = "";
+        document.getElementById("productPrice").value = "";
+        document.getElementById("productStock").value = "";
+        document.getElementById("category").value = "None";
+      } else {
+        alert("Product creation failed");
+      }
+    });
+  }
+
+  async function submitCategory() {
+    const name = document.getElementById("categoryName").value;
+
+    const json = {
+      name: name,
+    };
+
+    const response = await fetch("{% url 'main:create-category-ajax' %}", {
+      method: "POST",
+      body: JSON.stringify(json),
+    }).then((response) => {
+      if (response.status === 200) {
+        alert("Category created successfully");
+        setCategorySelect();
+        document.getElementById("categoryName").value = "";
+      } else {
+        alert("Category creation failed");
+      }
+    });
+  }
+
+  async function deleteProduct() {
+    const productId = document.getElementById("productSelect").value;
+    if (productId === "None") {
+      alert("Please select a product");
+      return;
+    }
+    const json = {
+      id: productId,
+    };
+
+    const response = await fetch("{% url 'main:delete-product-ajax' %}", {
+      method: "POST",
+      body: JSON.stringify(json),
+    }).then((response) => {
+      if (response.status === 200) {
+        alert("Product deleted successfully");
+        showProductData();
+      } else {
+        alert("Product deletion failed");
+      }
+    });
+  }
+
+  async function deleteCategory() {
+    const categoryId = document.getElementById("categorySelect").value;
+    if (categoryId === "None") {
+      alert("Please select a category");
+      return;
+    }
+
+    const json = {
+      id: categoryId,
+    };
+
+    const response = await fetch("{% url 'main:delete-category-ajax' %}", {
+      method: "POST",
+      body: JSON.stringify(json),
+    }).then((response) => {
+      if (response.status === 200) {
+        alert("Category deleted successfully");
+        setCategorySelect();
+      } else if (response.status === 401) {
+        alert("Category deletion failed, category still has products");
+      } else {
+        alert("Category deletion failed");
+      }
+    });
+  }
+
+  document.getElementById("submitProduct").addEventListener("click", () => {
+    submitProduct();
+  });
+
+  document.getElementById("submitCategory").addEventListener("click", () => {
+    submitCategory();
+  });
+
+  document
+    .getElementById("submitDeleteProduct")
+    .addEventListener("click", () => {
+      deleteProduct();
+    });
+
+  document
+    .getElementById("submitDeleteCategory")
+    .addEventListener("click", () => {
+      deleteCategory();
+    });
+
+  setCategorySelect();
+  showProductData();
+</script>
 {% endblock content %}
