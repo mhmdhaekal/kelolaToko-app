@@ -1,32 +1,33 @@
-FROM python:3.11-slim-buster
+ARG PYTHON_VERSION=3.11-slim-bullseye
 
-WORKDIR /app
+FROM python:${PYTHON_VERSION}
 
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app \
-    DJANGO_SETTINGS_MODULE=shopping_list.settings \
-    PORT=8000 \
-    WEB_CONCURRENCY=2
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Install system packages required Django.
-RUN apt-get update --yes --quiet && apt-get install --yes --quiet --no-install-recommends \
-&& rm -rf /var/lib/apt/lists/*
+# install psycopg2 dependencies.
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN addgroup --system django \
-    && adduser --system --ingroup django django
+RUN mkdir -p /code
 
-# Requirements are installed here to ensure they will be cached.
-COPY ./requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt
+WORKDIR /code
 
-# Copy project code
-COPY . .
+COPY requirements.txt /tmp/requirements.txt
+RUN set -ex && \
+    pip install --upgrade pip && \
+    pip install -r /tmp/requirements.txt && \
+    rm -rf /root/.cache/
+COPY . /code
 
-RUN python manage.py collectstatic --noinput --clear
+ENV SECRET_KEY "cwhhTMrWctkONhBVDLeW7S5ateqhwtTBDzjb5r10sqaU8D0l0J"
+ENV DJANGO_SETTINGS_MODULE=kelolaToko.settings
+ENV PRODUCTION=TRUE
+ENV DATABASE_URL=$DATABASE_URL
+RUN python manage.py collectstatic --noinput
 
-# Run as non-root user
-RUN chown -R django:django /app
-USER django
+EXPOSE 8000
 
-# Run application
-# CMD gunicorn shopping_list.wsgi:application
+CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "kelolaToko.wsgi"]
