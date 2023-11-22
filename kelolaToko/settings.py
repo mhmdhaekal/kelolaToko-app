@@ -43,9 +43,12 @@ INSTALLED_APPS = [
     "django_extensions",
     "main",
     "django_browser_reload",
+    "corsheaders",
+    "authentication",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -75,6 +78,19 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "kelolaToko.wsgi.application"
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://kelolatoko-app.fly.dev",
+    "https://muhammad-haekal22-tugas.pbp.cs.ui.ac.id",
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
