@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from main.models import Product, Category
 from main.forms import ProductForm, DeleteProductForm, CategoryForm, DeleteCategoryForm
-from django.http import HttpResponseNotFound, HttpResponseRedirect, HttpResponse
+from django.http import (
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+    HttpResponse,
+    JsonResponse,
+)
 from django.urls import reverse
 from django.core import serializers
 from django.shortcuts import redirect
@@ -219,12 +224,13 @@ def delete_category_ajax(request):
 
 
 def get_category_json(request):
-    categories = Category.objects.filter(user=request.user)
-    return HttpResponse(
-        serializers.serialize("json", categories),
-        content_type="application/json",
-        status=200,
-    )
+    categories = Category.objects.values("id", "name").filter(user=request.user)
+    categories = list(categories)
+    for category in categories:
+        category["id"] = str(category["id"])
+
+    response = {"categories": categories, "count": len(categories)}
+    return JsonResponse(response)
 
 
 def get_category_by_id_xml(request, id: str):

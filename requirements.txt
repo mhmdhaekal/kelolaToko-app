@@ -7,3 +7,4 @@ urllib3
 django-extensions
 django-browser-reload
 django-environ
+django-cors-headers
