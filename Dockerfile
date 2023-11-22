@@ -22,7 +22,7 @@ RUN set -ex && \
     rm -rf /root/.cache/
 COPY . /code
 
-ENV SECRET_KEY "cwhhTMrWctkONhBVDLeW7S5ateqhwtTBDzjb5r10sqaU8D0l0J"
+ENV SECRET_KEY "YKdmsWjoFfXTLFmdLMmxAzTW2sodbb5gXG6XZvl1PJIkTlViko"
 ENV DJANGO_SETTINGS_MODULE=kelolaToko.settings
 ENV PRODUCTION=TRUE
 ENV DATABASE_URL=$DATABASE_URL
